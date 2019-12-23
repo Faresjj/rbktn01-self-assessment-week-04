@@ -1,22 +1,29 @@
-var url = require('url');
-var http = require('http');
-var path = require('path');
+var express = require('express');
+var app = express();
+var Sequelize = require('sequelize');
+var bodyParser = require('body-parser');
+app.use(bodyParser.json());
+var sequelize = new Sequelize('test', 'test', null, { dialect: 'sqlite', storage: './db.test.sqlite' });
 
-var globalCounter = {};
+var User = sequelize.define('User', {
+  username: Sequelize.STRING
+});
+console.log(User);
 
-var server = http.createServer(function(request, response) {
-  var endpoint = url.parse(request.url, true).pathname;
-  var property = endpoint.replace(/^\//, '');
-
-  if (request.method === 'POST') {
-    // YOUR CODE HERE
-  } else if (request.method === 'GET') {
-    // YOUR CODE HERE
-  } else {
-    response.statusCode = 404;
-    response.end();
-  }
+app.get('/users', function (req, res) {
+  res.send('hi');
 });
 
-// Do not edit this line
-module.exports = server;
+app.post('/users', function (req, res) {
+  var body = req.body;
+  models.User.create({username: body}).then(function(result) {
+    res.json(result);
+  }).catch(function(err) {
+    console.log('error');
+    
+  });
+});
+module.exports = { 
+  app: app,
+  User: User
+};
